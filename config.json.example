@@ -1,0 +1,11 @@
+{
+	"random" : {
+		"token"	       : "RANDOM.ORG TOKEN GOES HERE",
+		"minimumCache" : 100
+	},
+	"matrix" : {
+		"homeserverUrl" : "https://matrix.org",
+		"accessToken"   : "YourSecretAccessToken",
+		"syncFile"      : "matrix-sync.json"
+	}
+}
