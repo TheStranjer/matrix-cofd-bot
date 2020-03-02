@@ -26,3 +26,6 @@ Example outputs:
 
 `!cofd 15 8r` -- roll fifteen dice with both 8-Again **AND** ones rote actions available
 
+# Running On Your Server
+
+Move `config.json.example` to `config.json` and fill in the values therein. Install any packages needed. Then run `nohup node ladyluck.js &`.
