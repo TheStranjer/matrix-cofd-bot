@@ -1,6 +1,7 @@
 // library calls
-const Matrix = require("matrix-bot-sdk");
-const fs     = require('fs');
+const Matrix    = require("matrix-bot-sdk");
+const fs        = require('fs');
+const RandomOrg = require('random-org');
 
 // setup
 const config = JSON.parse(fs.readFileSync('config.json', 'utf8'));
@@ -11,9 +12,41 @@ const client = new Matrix.MatrixClient(config.matrix.homeserverUrl, config.matri
 const CMDARY_REGEX = 0x00;
 const CMDARY_FUNC  = 0x01;
 
+var random = new RandomOrg({ apiKey: config.random.token, endpoint: 'https://api.random.org/json-rpc/2/invoke' });
+
+var d10s = JSON.parse(fs.readFileSync('./rand.json'));
+
+d10RefillCheck();
+
 function d10() {
-	return Math.ceil(Math.random() * 10);
+        ret = d10s.pop();
+	d10RefillCheck();
+        if (typeof(ret) == 'undefined') {
+		return Math.ceil(Math.random() * 10);
+        } else {
+                return ret;
+	}
 }
+
+function d10RefillCheck() {
+	if (d10s.length < config.random.minimumCache) {
+		console.log(`d10s have ${d10s.length} left. Refilling...`);
+		random.generateIntegers({ min: 1, max: 10, n: config.random.minimumCache })
+		.then(function (result) {
+			d10s = d10s.concat(result.random.data);
+			console.log(`d10s now at ${d10s.length}.`);
+			fs.writeFile("./rand.json", JSON.stringify(d10s), (err) => {
+				if (err) {
+					console.error(err);
+					return;
+				}
+
+				console.log("File has been saved");
+			});
+		});
+	}
+}
+
 
 function rollDice(pool, again, rote_action, ones_botch) {
 	var ret = {
@@ -85,6 +118,9 @@ async function processCmd_cofd(roomId, ev, match) {
 	var rote_action = false;
 	var ones_botch  = false;
 	var dice_pool   = parseInt(match[1]);
+	if (dice_pool > 50) {
+		dice_pool = 50;
+	}
 	if (match.length > 2) {
 		for (i = 0; i < match[2].length; i++) {
 			switch (match[2][i]) {
