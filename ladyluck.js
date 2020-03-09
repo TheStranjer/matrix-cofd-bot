@@ -112,6 +112,57 @@ function rollDice(pool, again, rote_action, ones_botch) {
 	return ret;
 }
 
+async function processCmd_cp(roomId, ev, match) {
+	var luck = (match[2] !== undefined ? parseInt(match[2]) : 0);
+	var mods = parseInt(match[1]);
+	var results = [];
+	var lucks = [luck];
+	var total = 0;
+	
+	var luck_current = luck;
+	do {
+		var roll = d10();
+		var modded_nat = roll + luck_current;
+		total += modded_nat;
+		results.push(roll);
+		if (roll + luck_current >= 10) {
+			luck_current -= 10;
+			luck_current += roll;
+		} else {
+			luck_current = 0;
+		}
+		lucks.push(luck_current);
+	} while (modded_nat >= 10);
+
+	var textReply = "Rolling CyberPunk 2020  check with " + (mods != 0 ? mods + " mods" : "no mods") + (luck > 0 ? " and " + luck : " luck") + ". Results: \n";
+	var htmlReply = "Rolling CyberPunk 2020 check with <B>" + (mods != 0 ? mods + " mods" : "no mods") + "</B>" + (luck > 0 ? "<FONT COLOR=green> and " + luck + " luck</FONT>" : "") + ". <B>Results:</B><BR/>";
+
+	if (results.length == 1 && results[0] == 1) {
+		textReply += "1, BOTCH!";
+		htmlReply += "<FONT COLOR=red>1, BOTCH!</FONT>";
+	} else {
+		textReply += results[0] + (lucks[0] > 0 ? " + " + lucks[0] : "");
+		htmlReply += results[0] + (lucks[0] > 0 ? " + <FONT COLOR=green>" + lucks[0] + "</FONT>": "");
+		for (i = 1; i < results.length; i++) {
+			textReply += "\n + " + results[i] + (lucks[i] > 0 ? " + " + lucks[i] : "");
+			htmlReply += "<BR/>" + results[i] + (lucks[i] > 0 ? " + <FONT COLOR=green>" + lucks[i] + "</FONT>": "");
+		}
+
+		if (mods != 0) {
+			textReply += (mods > 0 ? "\n + " : " - ") + Math.abs(mods);
+			htmlReply += (mods > 0 ? "<BR/><FONT COLOR=green> + " : "<FONT COLOR=red> - ") + Math.abs(mods) + "</FONT>";
+		}
+
+		textReply +=  "\nTotal: " + (total + mods);
+		htmlReply +=  "<BR/><B>Total:</B> " + (total + mods);
+	}
+
+
+	var reply = Matrix.RichReply.createFor(roomId, ev, textReply, htmlReply + lucks);
+	reply["msgtype"] = "m.notice";
+	client.sendMessage(roomId, reply);
+}
+
 async function processCmd_cofd(roomId, ev, match) {
 	// set up defaults for dice roll function call
 	var again       = 10;
@@ -177,8 +228,11 @@ async function processCmd_cofd(roomId, ev, match) {
 }
 
 const commands = [
-	[/^!cofd (\d+)$/i,        processCmd_cofd],
-	[/^!cofd (\d+) (\w+)$/i,  processCmd_cofd]
+	[/^!cofd (\d+)$/i,                processCmd_cofd],
+	[/^!cofd (\d+) (\w+)$/i,          processCmd_cofd],
+	[/^!cp (\d+)$/i,                  processCmd_cp],
+	[/^!cp ([-+]{0,1}[\d]+)$/,        processCmd_cp],
+	[/^!cp ([-+]{0,1}[\d]+) (\d+)$/,  processCmd_cp]
 ];
 
 Matrix.AutojoinRoomsMixin.setupOnClient(client);
