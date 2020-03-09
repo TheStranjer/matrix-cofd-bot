@@ -158,7 +158,7 @@ async function processCmd_cp(roomId, ev, match) {
 	}
 
 
-	var reply = Matrix.RichReply.createFor(roomId, ev, textReply, htmlReply + lucks);
+	var reply = Matrix.RichReply.createFor(roomId, ev, textReply, htmlRepl);
 	reply["msgtype"] = "m.notice";
 	client.sendMessage(roomId, reply);
 }
