@@ -141,7 +141,7 @@ async function processCmd_cp(roomId, ev, match) {
 	var textReply = "Rolling CyberPunk 2020  check with " + (mods != 0 ? mods + " mods" : "no mods") + (luck > 0 ? " and " + luck : " luck") + ". Results: \n";
 	var htmlReply = "Rolling CyberPunk 2020 check with <B>" + (mods != 0 ? mods + " mods" : "no mods") + "</B>" + (luck > 0 ? "<FONT COLOR=green> and " + luck + " luck</FONT>" : "") + ". <B>Results:</B><BR/>";
 
-	if (results[0] == 1) {
+	if (total == 1) {
 		textReply += "1, BOTCH!";
 		htmlReply += "<FONT COLOR=red>1, BOTCH!</FONT>";
 	} else {
