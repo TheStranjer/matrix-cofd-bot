@@ -116,22 +116,26 @@ async function processCmd_cp(roomId, ev, match) {
 	var luck = (match[2] !== undefined ? parseInt(match[2]) : 0);
 	var mods = parseInt(match[1]);
 	var results = [];
-	var lucks = [luck];
+	var lucks = [];
 	var total = 0;
 	
 	var luck_current = luck;
 	do {
 		var roll = d10();
-		var modded_nat = roll + luck_current;
-		total += modded_nat;
+		var modded_nat = 0;
 		results.push(roll);
 		if (roll + luck_current >= 10) {
-			luck_current -= 10;
-			luck_current += roll;
+			var increased_by = 10 - roll;
+			lucks.push(increased_by);
+			luck_current -= increased_by;
+			total += 10;
+			modded_nat = 10;
 		} else {
+			modded_nat = luck_current + roll;
+			total += modded_nat;
+			lucks.push(luck_current);
 			luck_current = 0;
 		}
-		lucks.push(luck_current);
 	} while (modded_nat >= 10);
 
 	var textReply = "Rolling CyberPunk 2020  check with " + (mods != 0 ? mods + " mods" : "no mods") + (luck > 0 ? " and " + luck : " luck") + ". Results: \n";
