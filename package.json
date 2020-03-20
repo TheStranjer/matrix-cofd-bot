@@ -1,0 +1,32 @@
+{
+  "name": "lady-luck",
+  "version": "1.0.0",
+  "description": "A Matrix Chronicles of Darkness dicebot (also can do CP2020 rolls)",
+  "main": "ladyluck.js",
+  "dependencies": {
+    "matrix-bot-sdk": "^0.5.0",
+    "random-org": "^2.0.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TheStranjer/matrix-cofd-bot.git"
+  },
+  "keywords": [
+    "dice",
+    "random",
+    "bot",
+    "matrix",
+    "cofd",
+    "wod"
+  ],
+  "author": "The Stranjer",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/TheStranjer/matrix-cofd-bot/issues"
+  },
+  "homepage": "https://github.com/TheStranjer/matrix-cofd-bot#readme"
+}
