@@ -247,7 +247,12 @@ console.log("Client starting...");
 
 client.start().then(async function () {
 	console.log("Client started! Client user id: " + (await client.getUserId()));
-});
+}).catch(function (er) {
+	console.log("COULD NOT LOG IN\n\n");
+	console.log("<error>");
+	console.log(er);
+	console.log("</error>");
+});;
 
 async function shouldSkipEvent(ev) {
 	if (!ev.content) {
